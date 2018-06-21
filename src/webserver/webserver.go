@@ -1,23 +1,27 @@
 package main
 
 import (
-   //"fmt"
+   "fmt"
    "net/http"
-   //"strings"
+   "net/http/httputil"
    "log"
 )
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-   http.ServeFile(w, r, "./static/index.html")
+   http.ServeFile(w, r, "./index.html")
+   fmt.Println("served home page")
 }
+
 func BootstrapPage(w http.ResponseWriter, r *http.Request) {
-   http.ServeFile(w, r, "./static/bootstrap.html")
+   http.ServeFile(w, r, "./bootstrap.html")
+   fmt.Println("served bootstrap page")
 }
 
 func main() {
    http.HandleFunc("/", homePage) // set router
    http.HandleFunc("/bootstrap", BootstrapPage) // set router
-   err := http.ListenAndServe(":9090", nil) // set listen port
+   http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+   err := http.ListenAndServe(":8090", nil) // set listen port
    if err != nil {
       log.Fatal("ListenAndServe: ", err)
    }
